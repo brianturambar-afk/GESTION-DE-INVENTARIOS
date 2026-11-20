@@ -1,0 +1,203 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Item catalog specification, classification, location, and stock tracker for IMMEX Anexo 24",
+      "type": "object",
+      "properties": {
+        "sku": { "type": "string", "description": "Unique Stock Keeping Unit code" },
+        "name": { "type": "string", "description": "Human readable name" },
+        "category": { "type": "string", "description": "Product classification category" },
+        "bienType": { "type": "string", "description": "IMMEX good type: MATERIA_PRIMA, COMPONENTE, PRODUCTO_TERMINADO, ACTIVO_FIJO, CONTENEDOR_TRAILER" },
+        "fraccionArancelaria": { "type": "string", "description": "Harmonized tariff code TIGIE" },
+        "unidadMedida": { "type": "string", "description": "Unit of measure" },
+        "costPrice": { "type": "number", "description": "Wholesale buy price USD" },
+        "salePrice": { "type": "number", "description": "Customer retail / return price USD" },
+        "stock": { "type": "integer", "description": "Physical warehouse stock" },
+        "anexo24Stock": { "type": "integer", "description": "Anexo 24 system ledger stock" },
+        "anexo30Stock": { "type": "integer", "description": "SAT Anexo 30 portal stock" },
+        "minStock": { "type": "integer", "description": "Alert point for reorder" },
+        "suppliers": { "type": "array", "description": "Names of linked suppliers" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["sku", "name", "category", "fraccionArancelaria", "stock", "anexo24Stock", "anexo30Stock"]
+    },
+    "Pedimento": {
+      "title": "Pedimento",
+      "description": "Mexican Customs declaration document for import and export with 15-digit SAT format",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "numeroPedimento": { "type": "string", "description": "15-digit SAT pedimento number" },
+        "tipo": { "type": "string", "enum": ["ENTRADA", "SALIDA"] },
+        "clave": { "type": "string", "description": "Customs code (IN, AF, RT, V1, V5, A1)" },
+        "aduana": { "type": "string" },
+        "patente": { "type": "string" },
+        "fechaPago": { "type": "string", "format": "date-time" },
+        "fechaRegistro": { "type": "string", "format": "date-time" },
+        "cumplePlazo48h": { "type": "boolean" },
+        "horasTranscurridasRegistro": { "type": "number" },
+        "proveedorCliente": { "type": "string" },
+        "paisOrigenDestino": { "type": "string" },
+        "valorTotalUSD": { "type": "number" },
+        "creditoIvaIepsTotal": { "type": "number" }
+      },
+      "required": ["id", "numeroPedimento", "tipo", "clave", "aduana", "patente", "fechaPago", "cumplePlazo48h"]
+    },
+    "DescargoPEPS": {
+      "title": "DescargoPEPS",
+      "description": "FIFO discharge linking output pedimento to oldest open temporary import pedimento",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fechaDescargo": { "type": "string", "format": "date-time" },
+        "pedimentoSalidaId": { "type": "string" },
+        "numeroPedimentoSalida": { "type": "string" },
+        "pedimentoEntradaId": { "type": "string" },
+        "numeroPedimentoEntrada": { "type": "string" },
+        "sku": { "type": "string" },
+        "cantidadDescargada": { "type": "number" },
+        "valorAmortizadoUSD": { "type": "number" },
+        "creditoIvaAmortizado": { "type": "number" },
+        "saldoRestanteEntrada": { "type": "number" },
+        "estatusAnexo30": { "type": "string" }
+      },
+      "required": ["id", "fechaDescargo", "numeroPedimentoSalida", "numeroPedimentoEntrada", "sku", "cantidadDescargada"]
+    },
+    "BillOfMaterials": {
+      "title": "BillOfMaterials",
+      "description": "Engineering component breakdown with justified scrap and waste percentages",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "skuProductoTerminado": { "type": "string" },
+        "nombreProducto": { "type": "string" },
+        "version": { "type": "string" },
+        "vigencia": { "type": "string" },
+        "rendimientoEsperado": { "type": "number" },
+        "justificacionTecnicaMermas": { "type": "string" }
+      },
+      "required": ["id", "skuProductoTerminado", "version", "rendimientoEsperado"]
+    },
+    "MermaRegistro": {
+      "title": "MermaRegistro",
+      "description": "Scrap and waste destruction or donation records with technical justification and photo evidence",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fecha": { "type": "string", "format": "date-time" },
+        "sku": { "type": "string" },
+        "cantidad": { "type": "number" },
+        "motivoTecnico": { "type": "string" },
+        "destino": { "type": "string" },
+        "folioManifiesto": { "type": "string" }
+      },
+      "required": ["id", "sku", "cantidad", "motivoTecnico", "destino", "folioManifiesto"]
+    },
+    "TomaFisicaInventario": {
+      "title": "TomaFisicaInventario",
+      "description": "Cyclic physical count audit log to detect missing or surplus goods before SAT review",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "fechaToma": { "type": "string", "format": "date-time" },
+        "sku": { "type": "string" },
+        "saldoTeoricoAnexo24": { "type": "number" },
+        "conteoFisicoReal": { "type": "number" },
+        "diferencia": { "type": "number" },
+        "tipoDiscrepancia": { "type": "string" },
+        "montoRiesgoMultaMXN": { "type": "number" }
+      },
+      "required": ["id", "sku", "saldoTeoricoAnexo24", "conteoFisicoReal", "tipoDiscrepancia"]
+    },
+    "ExpedienteElectronico": {
+      "title": "ExpedienteElectronico",
+      "description": "5-year digital customs audit dossier upholding SAT materiality and traceability standards",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "numeroPedimento": { "type": "string" },
+        "lote": { "type": "string" },
+        "fechaOperacion": { "type": "string", "format": "date-time" },
+        "fechaResguardoObligatorio": { "type": "string", "format": "date-time" },
+        "porcentajeCompletitud": { "type": "number" },
+        "nivelMaterialidad": { "type": "string" }
+      },
+      "required": ["id", "numeroPedimento", "fechaOperacion", "porcentajeCompletitud", "nivelMaterialidad"]
+    },
+    "Movement": {
+      "title": "Movement",
+      "description": "Audit-logged warehouse transaction item",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "sku": { "type": "string" },
+        "productName": { "type": "string" },
+        "type": { "type": "string" },
+        "quantity": { "type": "integer" },
+        "user": { "type": "string" },
+        "reason": { "type": "string" },
+        "reference": { "type": "string" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "sku", "productName", "type", "quantity", "user", "reason", "reference", "timestamp"]
+    },
+    "Supplier": {
+      "title": "Supplier",
+      "description": "Enterprise distribution partner metadata",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "contact": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "rfcTaxId": { "type": "string" },
+        "pais": { "type": "string" }
+      },
+      "required": ["id", "name", "email"]
+    },
+    "Webhook": {
+      "title": "Webhook",
+      "description": "Subscriber channel for integration notifications",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "url": { "type": "string" },
+        "events": { "type": "array" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "url", "events", "isActive", "createdAt"]
+    },
+    "WebhookLog": {
+      "title": "WebhookLog",
+      "description": "History of dispatched webhooks and responses",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "webhookId": { "type": "string" },
+        "url": { "type": "string" },
+        "event": { "type": "string" },
+        "payload": { "type": "string" },
+        "status": { "type": "integer" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "webhookId", "url", "event", "payload", "status", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/products/{sku}": { "schema": "Product", "description": "Collection tracking catalog and stocks" },
+    "/pedimentos/{id}": { "schema": "Pedimento", "description": "Customs import and export declarations" },
+    "/descargosPEPS/{id}": { "schema": "DescargoPEPS", "description": "FIFO automated discharges" },
+    "/boms/{id}": { "schema": "BillOfMaterials", "description": "Bill of materials formulas and scrap" },
+    "/mermas/{id}": { "schema": "MermaRegistro", "description": "Scrap and destruction manifests" },
+    "/inventariosCiclicos/{id}": { "schema": "TomaFisicaInventario", "description": "Cyclic counts and discrepancy audits" },
+    "/expedientes/{id}": { "schema": "ExpedienteElectronico", "description": "5-year electronic materiality dossier" },
+    "/movements/{id}": { "schema": "Movement", "description": "Immutable transaction ledger" },
+    "/suppliers/{id}": { "schema": "Supplier", "description": "Vendor directory" },
+    "/webhooks/{id}": { "schema": "Webhook", "description": "Custom integrations webhooks config" },
+    "/webhookLogs/{id}": { "schema": "WebhookLog", "description": "Logs of webhook deliveries" }
+  }
+}

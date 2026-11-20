@@ -1,0 +1,6 @@
+{
+  "name": "Gestión de Inventario B2B",
+  "description": "Sistema SaaS B2B de gestión de inventarios con control de movimientos (Kardex) inmutable, dashboard ejecutivo de KPIs y simulación de webhooks para integraciones.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

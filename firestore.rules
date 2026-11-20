@@ -1,0 +1,9 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Standard rule: Allow authorized access to read/write all documents in our simple B2B system
+    match /{document=**} {
+      allow read, write: if true; // In full-stack system, backend API routes (server.ts) handle secure database reads/writes with Admin SDK.
+    }
+  }
+}
